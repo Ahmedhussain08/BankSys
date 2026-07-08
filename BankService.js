@@ -9,10 +9,10 @@ const {
 class BankService {
 
     constructor() {
-        // Array (Vector)
+        // Array (Vector) representation of data
         this.accounts = storage.loadAccounts();
 
-        // HashMap
+        // O(1) HashMap lookup implementation
         this.accountMap = new Map();
 
         this.accounts.forEach(account => {
@@ -23,9 +23,9 @@ class BankService {
         this.transactions = storage.loadTransactions();
     }
 
-    // =========================
+    // ==========================================
     // Create Account
-    // =========================
+    // ==========================================
     createAccount(id, name, accountType, balance) {
         if (this.accountMap.has(id)) {
             return {
@@ -60,28 +60,27 @@ class BankService {
         };
     }
 
-    // =========================
+    // ==========================================
     // Get All Accounts
-    // =========================
+    // ==========================================
     getAccounts() {
         return this.accounts;
     }
 
-    // =========================
-    // Search Account
-    // O(1) using HashMap
-    // =========================
+    // ==========================================
+    // Search Account: O(1) using HashMap
+    // ==========================================
     searchAccount(id) {
         return this.accountMap.get(id) || null;
     }
 
-    // =========================
+    // ==========================================
     // Deposit
-    // =========================
+    // ==========================================
     deposit(id, amount) {
         const depositAmount = Number(amount);
 
-        // BUG FIX: Block negative values or zero
+        // BUG FIX: Block negative values or zero inputs
         if (isNaN(depositAmount) || depositAmount <= 0) {
             return {
                 success: false,
@@ -115,13 +114,13 @@ class BankService {
         };
     }
 
-    // =========================
+    // ==========================================
     // Withdraw
-    // =========================
+    // ==========================================
     withdraw(id, amount) {
         const withdrawAmount = Number(amount);
 
-        // BUG FIX: Block negative values or zero
+        // BUG FIX: Block negative values or zero inputs
         if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
             return {
                 success: false,
@@ -162,11 +161,11 @@ class BankService {
         };
     }
 
-    // =========================
+    // ==========================================
     // Transfer
-    // =========================
+    // ==========================================
     transfer(fromId, toId, amount) {
-        // BUG FIX: Block self-transfers
+        // BUG FIX: Prevent self-transfers
         if (fromId === toId) {
             return {
                 success: false,
@@ -176,7 +175,7 @@ class BankService {
 
         const transferAmount = Number(amount);
 
-        // BUG FIX: Block negative values or zero
+        // BUG FIX: Block negative values or zero inputs
         if (isNaN(transferAmount) || transferAmount <= 0) {
             return {
                 success: false,
@@ -190,7 +189,7 @@ class BankService {
         if (!sender || !receiver) {
             return {
                 success: false,
-                message: "Invalid account."
+                message: "Invalid account routing paths."
             };
         }
 
@@ -219,9 +218,9 @@ class BankService {
         };
     }
 
-    // =========================
+    // ==========================================
     // Delete Account
-    // =========================
+    // ==========================================
     deleteAccount(id) {
         if (!this.accountMap.has(id)) {
             return {
@@ -244,27 +243,58 @@ class BankService {
         };
     }
 
-    // =========================
-    // Sort by Account ID
-    // Quick Sort
-    // =========================
+    // ==========================================
+    // Sort by Account ID (Quick Sort)
+    // ==========================================
     sortById() {
         const sortedAccounts = [...this.accounts];
         return quickSortById(sortedAccounts);
     }
 
-    // =========================
-    // Sort by Balance
-    // Quick Sort
-    // =========================
+    // ==========================================
+    // Sort by Balance (Quick Sort)
+    // ==========================================
     sortByBalance() {
         const sortedAccounts = [...this.accounts];
         return quickSortByBalance(sortedAccounts);
     }
 
-    // =========================
+    // ==========================================
+    // Populate Dummy Data (Demo Tools)
+    // ==========================================
+    populateDummyData() {
+        // Only run if the database array is currently empty
+        if (this.accounts.length > 0) {
+            return {
+                success: false,
+                message: "System already contains data. Clear records to load template."
+            };
+        }
+
+        const dummyAccounts = [
+            { id: "1001", name: "Alice Smith", type: "Savings", balance: 25000 },
+            { id: "1002", name: "Bob Jones", type: "Current", balance: 5000 },
+            { id: "1003", name: "Charlie Brown", type: "Savings", balance: 125000 },
+            { id: "1004", name: "Diana Prince", type: "Current", balance: 8700 }
+        ];
+
+        dummyAccounts.forEach(data => {
+            const account = new Account(data.id, data.name, data.type, data.balance);
+            this.accounts.push(account);
+            this.accountMap.set(data.id, account);
+        });
+
+        storage.saveAccounts(this.accounts);
+
+        return {
+            success: true,
+            message: "Successfully loaded 4 dummy accounts into database structures."
+        };
+    }
+
+    // ==========================================
     // Add Transaction
-    // =========================
+    // ==========================================
     addTransaction(type, from, to, amount) {
         this.transactions.push({
             type,
@@ -277,13 +307,12 @@ class BankService {
         storage.saveTransactions(this.transactions);
     }
 
-    // =========================
+    // ==========================================
     // Get Transaction History
-    // =========================
+    // ==========================================
     getTransactions() {
         return this.transactions;
     }
-
 }
 
 module.exports = BankService;
