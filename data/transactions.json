@@ -1,0 +1,44 @@
+[
+    {
+        "type": "Deposit",
+        "from": 1001,
+        "to": null,
+        "amount": 1000,
+        "date": "7/8/2026, 10:13:04 AM"
+    },
+    {
+        "type": "Deposit",
+        "from": 1001,
+        "to": null,
+        "amount": 1000,
+        "date": "7/8/2026, 10:13:04 AM"
+    },
+    {
+        "type": "Withdraw",
+        "from": 1002,
+        "to": null,
+        "amount": 2000,
+        "date": "7/8/2026, 10:18:22 AM"
+    },
+    {
+        "type": "Transfer",
+        "from": 1001,
+        "to": 1002,
+        "amount": 2000,
+        "date": "7/8/2026, 10:45:52 AM"
+    },
+    {
+        "type": "Deposit",
+        "from": 1001,
+        "to": null,
+        "amount": 25000,
+        "date": "7/8/2026, 10:53:17 AM"
+    },
+    {
+        "type": "Transfer",
+        "from": 1002,
+        "to": 1001,
+        "amount": 1500,
+        "date": "7/8/2026, 11:07:30 AM"
+    }
+]

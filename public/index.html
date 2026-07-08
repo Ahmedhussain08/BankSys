@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banking Management System</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-brand">
+<div class="mark"><i class="fa-solid fa-building-columns"></i></div>
+<div>
+<div class="name">BankSys</div>
+<span class="sub">Banking System</span>
+</div>
+</div>
+<nav class="sidebar-nav">
+<span class="nav-eyebrow">Overview</span>
+<a href="index.html" class="nav-link active"><i class="fa-solid fa-gauge-high"></i>Dashboard</a>
+<span class="nav-eyebrow">Operations</span>
+<a href="create.html" class="nav-link"><i class="fa-solid fa-user-plus"></i>Create Account</a>
+<a href="accounts.html" class="nav-link"><i class="fa-solid fa-users"></i>Accounts</a>
+<a href="deposit.html" class="nav-link"><i class="fa-solid fa-money-bill-wave"></i>Deposit</a>
+<a href="withdraw.html" class="nav-link"><i class="fa-solid fa-wallet"></i>Withdraw</a>
+<a href="transfer.html" class="nav-link"><i class="fa-solid fa-right-left"></i>Transfer</a>
+<span class="nav-eyebrow">Records</span>
+<a href="search.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i>Search</a>
+<a href="sort.html" class="nav-link"><i class="fa-solid fa-arrow-down-wide-short"></i>Quick Sort</a>
+<a href="transactions.html" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i>Transactions</a>
+</nav>
+<div class="sidebar-foot">Vault secured &middot; internal use only</div>
+</aside>
+<div class="main">
+<div class="topbar">
+<div>
+<div class="eyebrow">Overview</div>
+<h1>Dashboard</h1>
+</div>
+<button class="mobile-toggle" id="mobileToggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+</div>
+<div class="content">
+
+<div class="stat-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;">
+<div class="stat-card">
+<div class="stat-badge"><i class="fa-solid fa-users"></i></div>
+<div>
+<div class="stat-label">Total Accounts</div>
+<div class="stat-value" id="totalAccounts">&mdash;</div>
+</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-badge"><i class="fa-solid fa-sack-dollar"></i></div>
+<div>
+<div class="stat-label">Total Balance</div>
+<div class="stat-value" id="totalBalance">Rs. &mdash;</div>
+</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-badge"><i class="fa-solid fa-receipt"></i></div>
+<div>
+<div class="stat-label">Transactions</div>
+<div class="stat-value" id="totalTransactions">&mdash;</div>
+</div>
+</div>
+</div>
+
+<h3 style="font-size:1.05rem;margin-bottom:1rem;">Quick Actions</h3>
+
+<div class="action-grid">
+
+<a href="create.html" class="action-card tint-primary">
+<div class="action-icon"><i class="fa-solid fa-user-plus"></i></div>
+<h5>Create Account</h5>
+<span class="desc">Open a new account</span>
+</a>
+
+<a href="accounts.html" class="action-card tint-success">
+<div class="action-icon"><i class="fa-solid fa-users"></i></div>
+<h5>Accounts</h5>
+<span class="desc">View &amp; manage all accounts</span>
+</a>
+
+<a href="deposit.html" class="action-card tint-success">
+<div class="action-icon"><i class="fa-solid fa-money-bill-wave"></i></div>
+<h5>Deposit</h5>
+<span class="desc">Add funds to an account</span>
+</a>
+
+<a href="withdraw.html" class="action-card tint-warning">
+<div class="action-icon"><i class="fa-solid fa-wallet"></i></div>
+<h5>Withdraw</h5>
+<span class="desc">Take funds from an account</span>
+</a>
+
+<a href="transfer.html" class="action-card tint-info">
+<div class="action-icon"><i class="fa-solid fa-right-left"></i></div>
+<h5>Transfer</h5>
+<span class="desc">Move funds between accounts</span>
+</a>
+
+<a href="search.html" class="action-card tint-slate">
+<div class="action-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+<h5>Search</h5>
+<span class="desc">Look up an account by ID</span>
+</a>
+
+<a href="sort.html" class="action-card tint-violet">
+<div class="action-icon"><i class="fa-solid fa-arrow-down-wide-short"></i></div>
+<h5>Quick Sort</h5>
+<span class="desc">Order accounts by ID or balance</span>
+</a>
+
+<a href="transactions.html" class="action-card tint-danger">
+<div class="action-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+<h5>Transactions</h5>
+<span class="desc">Full activity history</span>
+</a>
+
+</div>
+</div>
+</div>
+</div>
+<script src="script.js"></script>
+<script>
+async function loadStats(){
+ try{
+  const a=await (await fetch('/accounts')).json();
+  document.getElementById('totalAccounts').textContent=a.length;
+  document.getElementById('totalBalance').textContent='Rs. '+a.reduce((s,x)=>s+Number(x.balance),0);
+  const t=await (await fetch('/transactions')).json();
+  document.getElementById('totalTransactions').textContent=t.length;
+ }catch(e){}
+}
+loadStats();
+</script>
+
+</body>
+</html>

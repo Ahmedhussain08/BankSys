@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accounts</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-brand">
+<div class="mark"><i class="fa-solid fa-building-columns"></i></div>
+<div>
+<div class="name">Ledger &amp; Co.</div>
+<span class="sub">Banking System</span>
+</div>
+</div>
+<nav class="sidebar-nav">
+<span class="nav-eyebrow">Overview</span>
+<a href="index.html" class="nav-link"><i class="fa-solid fa-gauge-high"></i>Dashboard</a>
+<span class="nav-eyebrow">Operations</span>
+<a href="create.html" class="nav-link"><i class="fa-solid fa-user-plus"></i>Create Account</a>
+<a href="accounts.html" class="nav-link active"><i class="fa-solid fa-users"></i>Accounts</a>
+<a href="deposit.html" class="nav-link"><i class="fa-solid fa-money-bill-wave"></i>Deposit</a>
+<a href="withdraw.html" class="nav-link"><i class="fa-solid fa-wallet"></i>Withdraw</a>
+<a href="transfer.html" class="nav-link"><i class="fa-solid fa-right-left"></i>Transfer</a>
+<span class="nav-eyebrow">Records</span>
+<a href="search.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i>Search</a>
+<a href="sort.html" class="nav-link"><i class="fa-solid fa-arrow-down-wide-short"></i>Quick Sort</a>
+<a href="transactions.html" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i>Transactions</a>
+</nav>
+<div class="sidebar-foot">Vault secured &middot; internal use only</div>
+</aside>
+<div class="main">
+<div class="topbar">
+<div>
+<div class="eyebrow">Records</div>
+<h1>All Accounts</h1>
+</div>
+<button class="mobile-toggle" id="mobileToggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+</div>
+<div class="content">
+
+<div class="card">
+<div class="card-header accent-success"><i class="fa-solid fa-users"></i><h3>All Accounts</h3></div>
+<div class="card-body table-wrap">
+
+<table class="ledger">
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Type</th>
+<th style="text-align:right;">Balance</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="accountTable"></tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="script.js"></script>
+<script>
+
+async function loadAccounts(){
+
+const response=await fetch('/accounts');
+const accounts=await response.json();
+
+const table=document.getElementById('accountTable');
+
+table.innerHTML='';
+
+if(accounts.length===0){
+table.innerHTML='<tr class="empty-row"><td colspan="5">No accounts yet &mdash; create one to get started.</td></tr>';
+return;
+}
+
+accounts.forEach(account=>{
+
+const typeClass = account.accountType==='Savings' ? 'badge-savings' : 'badge-current';
+
+table.innerHTML+=`
+<tr>
+
+<td class="mono">${account.id}</td>
+
+<td>${account.name}</td>
+
+<td><span class="badge-type ${typeClass}">${account.accountType}</span></td>
+
+<td class="cell-amount">Rs. ${account.balance}</td>
+
+<td>
+<div class="cell-actions">
+<a href="deposit.html?id=${account.id}" class="btn btn-success btn-sm">Deposit</a>
+
+<a href="withdraw.html?id=${account.id}" class="btn btn-warning btn-sm">Withdraw</a>
+
+<a href="transfer.html?id=${account.id}" class="btn btn-info btn-sm">Transfer</a>
+
+<button class="btn btn-danger btn-sm"
+onclick="deleteAccount(${account.id})">
+
+Delete
+
+</button>
+</div>
+
+</td>
+
+</tr>
+`;
+
+});
+
+}
+
+async function deleteAccount(id){
+
+if(!confirm("Delete this account?"))
+return;
+
+const response=await fetch('/accounts/'+id,{
+method:'DELETE'
+});
+
+const result=await response.json();
+
+alert(result.message);
+
+loadAccounts();
+
+}
+
+loadAccounts();
+
+</script>
+
+</body>
+</html>

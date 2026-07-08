@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Withdraw Money</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-brand">
+<div class="mark"><i class="fa-solid fa-building-columns"></i></div>
+<div>
+<div class="name">Ledger &amp; Co.</div>
+<span class="sub">Banking System</span>
+</div>
+</div>
+<nav class="sidebar-nav">
+<span class="nav-eyebrow">Overview</span>
+<a href="index.html" class="nav-link"><i class="fa-solid fa-gauge-high"></i>Dashboard</a>
+<span class="nav-eyebrow">Operations</span>
+<a href="create.html" class="nav-link"><i class="fa-solid fa-user-plus"></i>Create Account</a>
+<a href="accounts.html" class="nav-link"><i class="fa-solid fa-users"></i>Accounts</a>
+<a href="deposit.html" class="nav-link"><i class="fa-solid fa-money-bill-wave"></i>Deposit</a>
+<a href="withdraw.html" class="nav-link active"><i class="fa-solid fa-wallet"></i>Withdraw</a>
+<a href="transfer.html" class="nav-link"><i class="fa-solid fa-right-left"></i>Transfer</a>
+<span class="nav-eyebrow">Records</span>
+<a href="search.html" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i>Search</a>
+<a href="sort.html" class="nav-link"><i class="fa-solid fa-arrow-down-wide-short"></i>Quick Sort</a>
+<a href="transactions.html" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i>Transactions</a>
+</nav>
+<div class="sidebar-foot">Vault secured &middot; internal use only</div>
+</aside>
+<div class="main">
+<div class="topbar">
+<div>
+<div class="eyebrow">Operations</div>
+<h1>Withdraw Money</h1>
+</div>
+<button class="mobile-toggle" id="mobileToggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+</div>
+<div class="content content-narrow">
+
+<div class="card">
+<div class="card-header accent-warning"><i class="fa-solid fa-wallet"></i><h3>Withdraw Money</h3></div>
+<div class="card-body">
+
+<div id="message"></div>
+
+<div class="field">
+<label class="form-label">Account ID</label>
+<input type="number" id="id" class="form-control" placeholder="e.g. 1001">
+</div>
+
+<div class="field">
+<label class="form-label">Amount</label>
+<input type="number" id="amount" class="form-control" placeholder="0">
+</div>
+
+<button class="btn btn-warning btn-block" onclick="withdrawMoney()"><i class="fa-solid fa-arrow-up"></i> Withdraw</button>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="script.js"></script>
+<script>
+const params=new URLSearchParams(window.location.search);
+if(params.has("id")){
+document.getElementById("id").value=params.get("id");
+}
+
+async function withdrawMoney(){
+
+const data={
+id:Number(document.getElementById("id").value),
+amount:Number(document.getElementById("amount").value)
+};
+
+const response=await fetch("/withdraw",{
+method:"PUT",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(data)
+});
+
+const result=await response.json();
+
+document.getElementById("message").innerHTML=
+`<div class="alert ${result.success?"alert-success":"alert-danger"}">${result.message}</div>`;
+
+if(result.success){
+document.getElementById("amount").value="";
+}
+
+}
+</script>
+
+</body>
+</html>

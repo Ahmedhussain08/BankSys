@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search Account</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-brand">
+<div class="mark"><i class="fa-solid fa-building-columns"></i></div>
+<div>
+<div class="name">Ledger &amp; Co.</div>
+<span class="sub">Banking System</span>
+</div>
+</div>
+<nav class="sidebar-nav">
+<span class="nav-eyebrow">Overview</span>
+<a href="index.html" class="nav-link"><i class="fa-solid fa-gauge-high"></i>Dashboard</a>
+<span class="nav-eyebrow">Operations</span>
+<a href="create.html" class="nav-link"><i class="fa-solid fa-user-plus"></i>Create Account</a>
+<a href="accounts.html" class="nav-link"><i class="fa-solid fa-users"></i>Accounts</a>
+<a href="deposit.html" class="nav-link"><i class="fa-solid fa-money-bill-wave"></i>Deposit</a>
+<a href="withdraw.html" class="nav-link"><i class="fa-solid fa-wallet"></i>Withdraw</a>
+<a href="transfer.html" class="nav-link"><i class="fa-solid fa-right-left"></i>Transfer</a>
+<span class="nav-eyebrow">Records</span>
+<a href="search.html" class="nav-link active"><i class="fa-solid fa-magnifying-glass"></i>Search</a>
+<a href="sort.html" class="nav-link"><i class="fa-solid fa-arrow-down-wide-short"></i>Quick Sort</a>
+<a href="transactions.html" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i>Transactions</a>
+</nav>
+<div class="sidebar-foot">Vault secured &middot; internal use only</div>
+</aside>
+<div class="main">
+<div class="topbar">
+<div>
+<div class="eyebrow">Records</div>
+<h1>Search Account</h1>
+</div>
+<button class="mobile-toggle" id="mobileToggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+</div>
+<div class="content content-narrow">
+
+<div class="card">
+<div class="card-header accent-slate"><i class="fa-solid fa-magnifying-glass"></i><h3>Search Account</h3></div>
+<div class="card-body">
+
+<div class="input-group" style="margin-bottom:1.35rem;">
+<input type="number" id="id" class="form-control" placeholder="Enter Account ID">
+<button class="btn btn-primary" onclick="searchAccount()"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+</div>
+
+<div id="result"></div>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="script.js"></script>
+<script>
+async function searchAccount(){
+
+const id=document.getElementById("id").value;
+
+if(id===""){
+alert("Enter Account ID");
+return;
+}
+
+const response=await fetch("/accounts/"+id);
+
+const resultDiv=document.getElementById("result");
+
+if(response.ok){
+
+const account=await response.json();
+
+resultDiv.innerHTML=`
+<div class="result-card">
+<div class="result-row"><span class="k">Account ID</span><span class="v">${account.id}</span></div>
+<div class="result-row"><span class="k">Name</span><span class="v">${account.name}</span></div>
+<div class="result-row"><span class="k">Type</span><span class="v">${account.accountType}</span></div>
+<div class="result-row"><span class="k">Balance</span><span class="v">Rs. ${account.balance}</span></div>
+</div>`;
+
+}else{
+
+const error=await response.json();
+
+resultDiv.innerHTML=`
+<div class="alert alert-danger">
+${error.message}
+</div>`;
+
+}
+
+}
+</script>
+
+</body>
+</html>

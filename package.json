@@ -1,0 +1,15 @@
+{
+  "name": "banking-management-system",
+  "version": "1.0.0",
+  "description": "DSA Banking Management System using HashMap and Quick Sort",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
