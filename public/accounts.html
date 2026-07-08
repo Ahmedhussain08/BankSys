@@ -6,6 +6,36 @@
 <title>Accounts</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="stylesheet" href="style.css">
+<style>
+  /* Quick search bar styling to match Ledger & Co. design */
+  .search-container {
+    margin-bottom: 20px;
+    display: flex;
+    position: relative;
+  }
+  .search-container i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+  }
+  .search-input {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: #fafafa;
+    transition: all 0.2s ease;
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: #2ecc71; /* Accent color matching success states */
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+</style>
 </head>
 <body>
 <div class="app-shell">
@@ -46,6 +76,11 @@
 <div class="card">
 <div class="card-header accent-success"><i class="fa-solid fa-users"></i><h3>All Accounts</h3></div>
 <div class="card-body table-wrap">
+
+<div class="search-container">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="text" id="tableFilter" class="search-input" placeholder="Search master list by Account ID or Name..." onkeyup="filterTable()">
+</div>
 
 <table class="ledger">
 <thead>
@@ -137,6 +172,25 @@ alert(result.message);
 
 loadAccounts();
 
+}
+
+// INSTANT REAL-TIME SEARCH FILTER LOGIC
+function filterTable() {
+    const input = document.getElementById('tableFilter').value.toLowerCase();
+    const rows = document.querySelectorAll('#accountTable tr');
+
+    rows.forEach(row => {
+        // Skip filtering if it's the "No accounts yet" placeholder row
+        if(row.classList.contains('empty-row')) return;
+
+        const textContent = row.textContent.toLowerCase();
+        // If row data contains the typed string, show it; otherwise hide it
+        if (textContent.includes(input)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
 }
 
 loadAccounts();
