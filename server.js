@@ -39,6 +39,13 @@ app.post("/accounts", (req, res) => {
 
 });
 
+// dummy data generation 
+
+app.post('/populate-demo', (req, res) => {
+    const result = bankService.populateDummyData();
+    res.json(result);
+});
+
 /* ======================================
    SEARCH ACCOUNT
 ====================================== */
