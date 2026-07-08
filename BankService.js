@@ -260,39 +260,6 @@ class BankService {
     }
 
     // ==========================================
-    // Populate Dummy Data (Demo Tools)
-    // ==========================================
-    populateDummyData() {
-        // Only run if the database array is currently empty
-        if (this.accounts.length > 0) {
-            return {
-                success: false,
-                message: "System already contains data. Clear records to load template."
-            };
-        }
-
-        const dummyAccounts = [
-            { id: "1001", name: "Alice Smith", type: "Savings", balance: 25000 },
-            { id: "1002", name: "Bob Jones", type: "Current", balance: 5000 },
-            { id: "1003", name: "Charlie Brown", type: "Savings", balance: 125000 },
-            { id: "1004", name: "Diana Prince", type: "Current", balance: 8700 }
-        ];
-
-        dummyAccounts.forEach(data => {
-            const account = new Account(data.id, data.name, data.type, data.balance);
-            this.accounts.push(account);
-            this.accountMap.set(data.id, account);
-        });
-
-        storage.saveAccounts(this.accounts);
-
-        return {
-            success: true,
-            message: "Successfully loaded 4 dummy accounts into database structures."
-        };
-    }
-
-    // ==========================================
     // Add Transaction
     // ==========================================
     addTransaction(type, from, to, amount) {
