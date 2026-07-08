@@ -67,6 +67,30 @@
 <div class="stat-value" id="totalTransactions">&mdash;</div>
 </div>
 </div>
+
+<div class="stat-card">
+<div class="stat-badge"><i class="fa-solid fa-scale-balanced"></i></div>
+<div>
+<div class="stat-label">Average Balance</div>
+<div class="stat-value" id="avgBalance">Rs. &mdash;</div>
+</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-badge"><i class="fa-solid fa-piggy-bank"></i></div>
+<div>
+<div class="stat-label">Savings Accounts</div>
+<div class="stat-value" id="savingsCount">&mdash;</div>
+</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-badge"><i class="fa-solid fa-building-columns"></i></div>
+<div>
+<div class="stat-label">Current Accounts</div>
+<div class="stat-value" id="currentCount">&mdash;</div>
+</div>
+</div>
 </div>
 
 
@@ -132,31 +156,14 @@ async function loadStats(){
  try{
   const a=await (await fetch('/accounts')).json();
   document.getElementById('totalAccounts').textContent=a.length;
-  document.getElementById('totalBalance').textContent='Rs. '+a.reduce((s,x)=>s+Number(x.balance),0);
+  const totalBalance=a.reduce((s,x)=>s+Number(x.balance),0);
+  document.getElementById('totalBalance').textContent='Rs. '+totalBalance;
+  document.getElementById('avgBalance').textContent='Rs. '+(a.length?Math.round(totalBalance/a.length):0);
+  document.getElementById('savingsCount').textContent=a.filter(x=>x.accountType==='Savings').length;
+  document.getElementById('currentCount').textContent=a.filter(x=>x.accountType==='Current').length;
   const t=await (await fetch('/transactions')).json();
   document.getElementById('totalTransactions').textContent=t.length;
  }catch(e){}
-}
-
-async function triggerDemoData() {
-    const btn = document.getElementById('demoBtn');
-    btn.disabled = true;
-    btn.innerText = "Loading...";
-
-    try {
-        const response = await fetch('/populate-demo', { method: 'POST' });
-        const result = await response.json();
-        
-        alert(result.message);
-        
-        // Reload statistical indicators upon generation
-        await loadStats();
-    } catch (error) {
-        alert("Failed to populate data. Check server routing configuration.");
-    } finally {
-        btn.disabled = false;
-        btn.innerText = "Populate Dummy Data";
-    }
 }
 
 loadStats();
