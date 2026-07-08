@@ -25,7 +25,6 @@ app.get("/accounts", (req, res) => {
    CREATE ACCOUNT
 ====================================== */
 app.post("/accounts", (req, res) => {
-
     const { id, name, accountType, balance } = req.body;
 
     const result = bank.createAccount(
@@ -36,13 +35,14 @@ app.post("/accounts", (req, res) => {
     );
 
     res.json(result);
-
 });
 
-// dummy data generation 
-
+/* ======================================
+   POPULATE DUMMY DATA (Demo Tools)
+====================================== */
 app.post('/populate-demo', (req, res) => {
-    const result = bankService.populateDummyData();
+    // FIXED: Changed bankService to bank to match your initialized constructor instance
+    const result = bank.populateDummyData(); 
     res.json(result);
 });
 
@@ -50,7 +50,6 @@ app.post('/populate-demo', (req, res) => {
    SEARCH ACCOUNT
 ====================================== */
 app.get("/accounts/:id", (req, res) => {
-
     const account = bank.searchAccount(Number(req.params.id));
 
     if (account) {
@@ -61,14 +60,12 @@ app.get("/accounts/:id", (req, res) => {
             message: "Account not found."
         });
     }
-
 });
 
 /* ======================================
    DEPOSIT
 ====================================== */
 app.put("/deposit", (req, res) => {
-
     const { id, amount } = req.body;
 
     const result = bank.deposit(
@@ -77,14 +74,12 @@ app.put("/deposit", (req, res) => {
     );
 
     res.json(result);
-
 });
 
 /* ======================================
    WITHDRAW
 ====================================== */
 app.put("/withdraw", (req, res) => {
-
     const { id, amount } = req.body;
 
     const result = bank.withdraw(
@@ -93,14 +88,12 @@ app.put("/withdraw", (req, res) => {
     );
 
     res.json(result);
-
 });
 
 /* ======================================
    TRANSFER
 ====================================== */
 app.put("/transfer", (req, res) => {
-
     const { fromId, toId, amount } = req.body;
 
     const result = bank.transfer(
@@ -110,79 +103,64 @@ app.put("/transfer", (req, res) => {
     );
 
     res.json(result);
-
 });
 
 /* ======================================
    DELETE ACCOUNT
 ====================================== */
 app.delete("/accounts/:id", (req, res) => {
-
     const result = bank.deleteAccount(
         Number(req.params.id)
     );
 
     res.json(result);
-
 });
 
 /* ======================================
    SORT BY ACCOUNT ID
 ====================================== */
 app.get("/sort/id", (req, res) => {
-
     res.json(bank.sortById());
-
 });
 
 /* ======================================
    SORT BY BALANCE
 ====================================== */
 app.get("/sort/balance", (req, res) => {
-
     res.json(bank.sortByBalance());
-
 });
 
 /* ======================================
    TRANSACTION HISTORY
 ====================================== */
 app.get("/transactions", (req, res) => {
-
     res.json(bank.getTransactions());
-
 });
 
 /* ======================================
    HOME PAGE
 ====================================== */
 app.get("/", (req, res) => {
-
     res.sendFile(path.join(__dirname, "public", "index.html"));
-
 });
 
 /* ======================================
    404 Handler
 ====================================== */
 app.use((req, res) => {
-
     res.status(404).json({
         success: false,
         message: "Route not found."
     });
-
 });
 
 /* ======================================
    Start Server
 ====================================== */
 app.listen(PORT, () => {
-
     console.log("==================================");
     console.log(" Banking Management System");
     console.log("==================================");
     console.log(`Server running on port ${PORT}`);
     console.log(`http://localhost:${PORT}`);
-
 });
