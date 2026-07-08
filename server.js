@@ -38,15 +38,6 @@ app.post("/accounts", (req, res) => {
 });
 
 /* ======================================
-   POPULATE DUMMY DATA (Demo Tools)
-====================================== */
-app.post('/populate-demo', (req, res) => {
-    // FIXED: Changed bankService to bank to match your initialized constructor instance
-    const result = bank.populateDummyData(); 
-    res.json(result);
-});
-
-/* ======================================
    SEARCH ACCOUNT
 ====================================== */
 app.get("/accounts/:id", (req, res) => {
