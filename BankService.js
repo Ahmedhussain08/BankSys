@@ -9,7 +9,6 @@ const {
 class BankService {
 
     constructor() {
-
         // Array (Vector)
         this.accounts = storage.loadAccounts();
 
@@ -28,7 +27,6 @@ class BankService {
     // Create Account
     // =========================
     createAccount(id, name, accountType, balance) {
-
         if (this.accountMap.has(id)) {
             return {
                 success: false,
@@ -36,11 +34,19 @@ class BankService {
             };
         }
 
+        const initialBalance = Number(balance);
+        if (isNaN(initialBalance) || initialBalance < 0) {
+            return {
+                success: false,
+                message: "Initial balance cannot be negative."
+            };
+        }
+
         const account = new Account(
             id,
             name,
             accountType,
-            balance
+            initialBalance
         );
 
         this.accounts.push(account);
@@ -73,6 +79,15 @@ class BankService {
     // Deposit
     // =========================
     deposit(id, amount) {
+        const depositAmount = Number(amount);
+
+        // BUG FIX: Block negative values or zero
+        if (isNaN(depositAmount) || depositAmount <= 0) {
+            return {
+                success: false,
+                message: "Deposit amount must be greater than zero."
+            };
+        }
 
         const account = this.accountMap.get(id);
 
@@ -83,7 +98,7 @@ class BankService {
             };
         }
 
-        account.balance += amount;
+        account.balance += depositAmount;
 
         storage.saveAccounts(this.accounts);
 
@@ -91,7 +106,7 @@ class BankService {
             "Deposit",
             id,
             null,
-            amount
+            depositAmount
         );
 
         return {
@@ -104,6 +119,15 @@ class BankService {
     // Withdraw
     // =========================
     withdraw(id, amount) {
+        const withdrawAmount = Number(amount);
+
+        // BUG FIX: Block negative values or zero
+        if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
+            return {
+                success: false,
+                message: "Withdrawal amount must be greater than zero."
+            };
+        }
 
         const account = this.accountMap.get(id);
 
@@ -114,14 +138,14 @@ class BankService {
             };
         }
 
-        if (account.balance < amount) {
+        if (account.balance < withdrawAmount) {
             return {
                 success: false,
                 message: "Insufficient balance."
             };
         }
 
-        account.balance -= amount;
+        account.balance -= withdrawAmount;
 
         storage.saveAccounts(this.accounts);
 
@@ -129,7 +153,7 @@ class BankService {
             "Withdraw",
             id,
             null,
-            amount
+            withdrawAmount
         );
 
         return {
@@ -142,6 +166,23 @@ class BankService {
     // Transfer
     // =========================
     transfer(fromId, toId, amount) {
+        // BUG FIX: Block self-transfers
+        if (fromId === toId) {
+            return {
+                success: false,
+                message: "Cannot transfer funds to the same account."
+            };
+        }
+
+        const transferAmount = Number(amount);
+
+        // BUG FIX: Block negative values or zero
+        if (isNaN(transferAmount) || transferAmount <= 0) {
+            return {
+                success: false,
+                message: "Transfer amount must be greater than zero."
+            };
+        }
 
         const sender = this.accountMap.get(fromId);
         const receiver = this.accountMap.get(toId);
@@ -153,15 +194,15 @@ class BankService {
             };
         }
 
-        if (sender.balance < amount) {
+        if (sender.balance < transferAmount) {
             return {
                 success: false,
                 message: "Insufficient balance."
             };
         }
 
-        sender.balance -= amount;
-        receiver.balance += amount;
+        sender.balance -= transferAmount;
+        receiver.balance += transferAmount;
 
         storage.saveAccounts(this.accounts);
 
@@ -169,7 +210,7 @@ class BankService {
             "Transfer",
             fromId,
             toId,
-            amount
+            transferAmount
         );
 
         return {
@@ -182,7 +223,6 @@ class BankService {
     // Delete Account
     // =========================
     deleteAccount(id) {
-
         if (!this.accountMap.has(id)) {
             return {
                 success: false,
@@ -209,11 +249,8 @@ class BankService {
     // Quick Sort
     // =========================
     sortById() {
-
         const sortedAccounts = [...this.accounts];
-
         return quickSortById(sortedAccounts);
-
     }
 
     // =========================
@@ -221,43 +258,30 @@ class BankService {
     // Quick Sort
     // =========================
     sortByBalance() {
-
         const sortedAccounts = [...this.accounts];
-
         return quickSortByBalance(sortedAccounts);
-
     }
 
     // =========================
     // Add Transaction
     // =========================
     addTransaction(type, from, to, amount) {
-
         this.transactions.push({
-
             type,
-
             from,
-
             to,
-
             amount,
-
             date: new Date().toLocaleString()
-
         });
 
         storage.saveTransactions(this.transactions);
-
     }
 
     // =========================
     // Get Transaction History
     // =========================
     getTransactions() {
-
         return this.transactions;
-
     }
 
 }
