@@ -60,7 +60,8 @@ function partitionByBalance(arr, low, high) {
 
     for (let j = low; j < high; j++) {
 
-        if (arr[j].balance < pivot) {
+        // Changed < to >
+        if (arr[j].balance > pivot) {
 
             i++;
 
@@ -74,7 +75,6 @@ function partitionByBalance(arr, low, high) {
 
     return i + 1;
 }
-
 module.exports = {
     quickSortById,
     quickSortByBalance
