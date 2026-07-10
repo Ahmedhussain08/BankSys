@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 <style>
-/* Filter section layout */
+/* Filter bar structure for aligning search and date range inputs */
 .filter-bar {
     display: flex;
     flex-wrap: wrap;
@@ -100,7 +100,6 @@
 </div>
 <div class="content">
 
-<!-- Filter Bar with Search and Date Pickers -->
 <div class="filter-bar">
     <div class="search-container">
         <i class="fa-solid fa-magnifying-glass"></i>
@@ -121,35 +120,21 @@
 <div class="card-body table-wrap">
 
 <table class="ledger">
-
 <thead>
-
 <tr>
-
 <th>#</th>
-
 <th>Type</th>
-
 <th>From</th>
-
 <th>To</th>
-
 <th style="text-align:right;">Amount</th>
-
 <th>Date</th>
-
 </tr>
-
 </thead>
-
 <tbody id="transactionTable">
-
 </tbody>
-
 </table>
 
 </div>
-
 </div>
 </div>
 </div>
@@ -175,9 +160,7 @@ function renderTable(transactions) {
     if(transactions.length === 0){
         table.innerHTML = `
         <tr class="empty-row">
-        <td colspan="6">
-        No Transactions Found
-        </td>
+        <td colspan="6">No Transactions Found</td>
         </tr>`;
         return;
     }
@@ -199,30 +182,61 @@ function renderTable(transactions) {
     });
 }
 
-// Unified Filter Engine: Works for both strings and dates simultaneously
+// Safely converts toLocaleString() back into clear calendar date values
+function parseTransactionDate(dateStr) {
+    if (!dateStr) return new Date(NaN);
+    
+    // Discards time context (e.g. "7/10/2026, 10:15:30 AM" becomes "7/10/2026")
+    const dateOnly = dateStr.split(',')[0].trim();
+    const parts = dateOnly.split(/[-/]/);
+    
+    if (parts.length === 3) {
+        if (parts[0].length === 4) {
+            return new Date(parts[0], parts[1] - 1, parts[2]); // YYYY/MM/DD layout
+        } else {
+            // Attempt standard engine configuration interpretation first
+            const attempt = new Date(dateOnly);
+            if (!isNaN(attempt.getTime())) return attempt;
+            
+            // Manual format mapping fallback (DD/MM/YYYY vs MM/DD/YYYY)
+            return new Date(parts[2], parts[0] - 1, parts[1]); 
+        }
+    }
+    
+    return new Date(dateStr);
+}
+
 function filterTransactions() {
     const searchTerm = document.getElementById("searchInput").value.toLowerCase();
     const fromDateVal = document.getElementById("fromDate").value;
     const toDateVal = document.getElementById("toDate").value;
     
-    // Parse user date boundaries if set
     const fromDate = fromDateVal ? new Date(fromDateVal) : null;
     const toDate = toDateVal ? new Date(toDateVal) : null;
-    if (toDate) toDate.setHours(23, 59, 59, 999); // Set to end of day boundary
+    
+    // Reset boundary stamps to account for whole-day captures
+    if (fromDate) fromDate.setHours(0, 0, 0, 0);
+    if (toDate) toDate.setHours(23, 59, 59, 999); 
 
     const filtered = allTransactions.filter(transaction => {
-        // 1. Text Search Filter
+        // 1. Text Filters
         const type = (transaction.type || "").toLowerCase();
         const fromAcc = (transaction.from || "").toLowerCase();
         const toAcc = (transaction.to || "").toLowerCase();
         const matchesText = type.includes(searchTerm) || fromAcc.includes(searchTerm) || toAcc.includes(searchTerm);
         
-        // 2. Date Range Filter
-        const txDate = new Date(transaction.date);
+        // 2. Date Filter
+        const txDate = parseTransactionDate(transaction.date);
         let matchesDate = true;
         
-        if (fromDate && txDate < fromDate) matchesDate = false;
-        if (toDate && txDate > toDate) matchesDate = false;
+        if (!isNaN(txDate.getTime())) {
+            const compareDate = new Date(txDate.getTime());
+            
+            if (fromDate && compareDate < fromDate) matchesDate = false;
+            if (toDate && compareDate > toDate) matchesDate = false;
+        } else if (fromDate || toDate) {
+            matchesDate = false; 
+        }
         
         return matchesText && matchesDate;
     });
@@ -232,6 +246,5 @@ function filterTransactions() {
 
 loadTransactions();
 </script>
-
 </body>
 </html>
